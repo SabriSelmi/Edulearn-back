@@ -31,6 +31,36 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
     })
 
 
+
+    app.get('/event/:id',(req,res)=>{
+        let id  = ObjectID(req.params.id);
+        db.collection('event').findOne({_id : id },(err,data)=>{
+            if(err)res.send('cant found student');
+            else res.send(data)
+        })
+      })
+
+
+
+      app.delete('/event/:id', (req, res) => {
+        let id =  ObjectID(req.params.id);
+        db.collection('event').deleteOne({_id:id},(err,data)=>{
+          if (err) res.send("err")
+          else res.send("deleted" + data)
+        })
+      })
+      
+      app.put('/event/:id',(req,res)=>{
+        let id = ObjectID(req.params.id);
+        let edited_proff  = req.body;
+            db.collection("event").findOneAndUpdate({_id:id},{$set:{...edited_proff}}, (err, res)=> {
+              if (err) throw err;
+           console.log("edited")
+            });
+      })
+
+
+
     app.get('/staff',(req,res)=>{
         db.collection("staff").find().toArray((err,data)=>{
             if (err)
@@ -101,7 +131,7 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
         })
     })
 
-    app.post("/events",(req,res)=>{
+    app.post("/event",(req,res)=>{
         let newEvent=req.body
         db.collection("events").insertOne(newEvent,(err,data)=>{
             if (err)
@@ -211,47 +241,178 @@ else res.send("Staff added successfully")
 
 
 
-    app.put("/modify-contact/:id",(req,res)=>{
-        let id=ObjectID(req.params.id)
-        let updatedContact=req.body
-        db.collection("contactList").findOneAndUpdate({_id:id},{$set:{...updatedContact}},(err,data)=>{
-            if (err)
-                res.send("can't update movie")
-            else res.send(data)
-        })
+    
+
+
+
+
+
+
+
+   
+/***************Firas */
+   /********************Event****************/
+
+  
+
+
+ 
+
+
+
+
+
+   /********************courses************** */
+
+   app.post('/course',(req,res)=>{
+    let new_course= req.body;
+    db.collection('course').insertOne({...new_course},(err,data)=>{
+      if (err) res.send("nan");
+      else res.send({...new_course})
     })
 
+  })
 
 
-
-
-
-
-    app.get('/contact-list/:id',(req,res)=>{
-        let ContactId=ObjectID(req.params.id);
-        db.collection("contactList").findOne({_id:ContactId},(err,data)=>{
-            if (err) console.log("can't fetch Contact");
-            else res.send(data)
-        });
+  app.get('/course',(req,res)=>{
+    db.collection('course').find().toArray((err,data)=>{
+      if (err) res.send("cant found course");
+      else res.send(data)
     })
 
-    app.delete('/contact-list/:id',(req,res)=>{
-        const id=ObjectID(req.params.id);
+  })
 
-
-        db.collection("contactList").findOneAndDelete({_id:id},(err,data)=>{
-            if (err)
-                res.send("Can't delete contact");
-            else {
-                res.send("Contact successfully deleted")
-
-            }
-
-        })
-
-
+  app.get('/sciencecourse',(req,res)=>{
+    db.collection('course').find({ "type": "Science" }).toArray((err,data)=>{
+      if (err) res.send("cant found course");
+      else res.send(data)
     })
+})
 
+
+app.get('/businesscourse',(req,res)=>{
+  db.collection('course').find({ "type": "Businees" }).toArray((err,data)=>{
+    if (err) res.send("cant found course");
+    else res.send(data)
+  })
+})
+
+
+app.get('/mathcourse',(req,res)=>{
+    db.collection('course').find({ "type": "math" }).toArray((err,data)=>{
+      if (err) res.send("cant found course");
+      else res.send(data)
+    })
+})
+
+app.get('/Humanitiescourse',(req,res)=>{
+    db.collection('course').find({ "type": "Humanities" }).toArray((err,data)=>{
+      if (err) res.send("cant found course");
+      else res.send(data)
+    })
+})
+
+app.get('/Diplomacourse',(req,res)=>{
+    db.collection('course').find({ "type": "Diploma" }).toArray((err,data)=>{
+      if (err) res.send("cant found course");
+      else res.send(data)
+    })
+})
+
+   /*******************Blog************************ */
+
+  
+/**********student************** */
+app.get('/students',  (req, res)=> {
+  db.collection('user').find({type:"student"}).toArray((err,data)=>{
+ (err)?res.send("err"):res.send(data)
+  })
+ })
+
+
+ app.post('/student',(req,res)=>{
+  let obj = {"type":"student"}
+    let new_student= {...req.body,...obj};
+  db.collection('user').insertOne({...new_student},(err,data)=>{
+    if (err) res.send("nan");
+    else res.send({...new_student})
+  })
+
+})
+
+
+app.get('/user/:id',(req,res)=>{
+  let id  = ObjectID(req.params.id);
+  db.collection('user').findOne({_id : id },{"type":"student"},(err,data)=>{
+      if(err)res.send('cant found student');
+      else res.send(data)
+  })
+})
+
+app.put('/user/:id',(req,res)=>{
+  let id = ObjectID(req.params.id);
+  let edited_student  = req.body;
+      db.collection("user").findOneAndUpdate({_id:id},{$set:{...edited_student}}, (err, res)=> {
+        if (err) throw err;
+     console.log("edited")
+      });
+})
+
+
+app.delete('/user/:id', (req, res) => {
+  let id =  ObjectID(req.params.id);
+  db.collection('user').deleteOne({_id:id},(err,data)=>{
+    if (err) res.send("err")
+    else res.send("deleted" + data)
+  })
+})
+
+/**********Prof************** */
+
+app.get('/professors',  (req, res)=> {
+  db.collection('user').find({type:"professor"}).toArray((err,data)=>{
+ (err)?res.send("err"):res.send(data)
+  })
+ })
+
+
+ app.post('/professor',(req,res)=>{
+   let obj = {"type":"professor"}
+  let new_professor= {...req.body,...obj};
+  console.log(new_professor);
+  db.collection('user').insertOne({...new_professor},(err,data)=>{
+    if (err) res.send("nan");
+    else res.send({...new_professor})
+  })
+
+})
+
+
+app.get('/user/:id',(req,res)=>{
+  let id  = ObjectID(req.params.id);
+  db.collection('user').findOne({_id : id },(err,data)=>{
+      if(err)res.send('cant found student');
+      else res.send(data)
+  })
+})
+
+app.put('/user/:id',(req,res)=>{
+  let id = ObjectID(req.params.id);
+  let edited_proff  = req.body;
+      db.collection("user").findOneAndUpdate({_id:id},{$set:{...edited_proff}}, (err, res)=> {
+        if (err) throw err;
+     console.log("edited")
+      });
+})
+
+
+app.delete('/user/:id', (req, res) => {
+  let id =  ObjectID(req.params.id);
+  db.collection('user').deleteOne({_id:id},(err,data)=>{
+    if (err) res.send("err")
+    else res.send("deleted" + data)
+  })
+})
 
 
 });
