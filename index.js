@@ -18,7 +18,7 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
         db.collection("courses").find().toArray((err,data)=>{
             if (err)
                 console.log("can't fetch data");
-            else res.send(data);
+                            else res.send(data);
         })
     })
 
@@ -32,28 +32,29 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
 
 
 
-    app.get('/event/:id',(req,res)=>{
+    app.get('/events/:id',(req,res)=>{
         let id  = ObjectID(req.params.id);
-        db.collection('event').findOne({_id : id },(err,data)=>{
+        db.collection('events').findOne({_id : id },(err,data)=>{
             if(err)res.send('cant found student');
+            
             else res.send(data)
         })
       })
 
 
 
-      app.delete('/event/:id', (req, res) => {
+      app.delete('/events/:id', (req, res) => {
         let id =  ObjectID(req.params.id);
-        db.collection('event').deleteOne({_id:id},(err,data)=>{
+        db.collection('events').deleteOne({_id:id},(err,data)=>{
           if (err) res.send("err")
           else res.send("deleted" + data)
         })
       })
       
-      app.put('/event/:id',(req,res)=>{
+      app.put('/events/:id',(req,res)=>{
         let id = ObjectID(req.params.id);
         let edited_proff  = req.body;
-            db.collection("event").findOneAndUpdate({_id:id},{$set:{...edited_proff}}, (err, res)=> {
+            db.collection("events").findOneAndUpdate({_id:id},{$set:{...edited_proff}}, (err, res)=> {
               if (err) throw err;
            console.log("edited")
             });
@@ -103,7 +104,7 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
 
 
     app.get('/users',(req,res)=>{
-        db.collection("users").find().toArray((err,data)=>{
+        db.collection("user").find().toArray((err,data)=>{
             if (err)
                 console.log("can't fetch data");
             else res.send(data);
@@ -131,7 +132,7 @@ MongoClient.connect(mongo_url,{ useNewUrlParser: true },(err,client)=>{
         })
     })
 
-    app.post("/event",(req,res)=>{
+    app.post("/events",(req,res)=>{
         let newEvent=req.body
         db.collection("events").insertOne(newEvent,(err,data)=>{
             if (err)
@@ -266,7 +267,7 @@ else res.send("Staff added successfully")
 
    app.post('/course',(req,res)=>{
     let new_course= req.body;
-    db.collection('course').insertOne({...new_course},(err,data)=>{
+    db.collection('courses').insertOne({...new_course},(err,data)=>{
       if (err) res.send("nan");
       else res.send({...new_course})
     })
@@ -275,7 +276,7 @@ else res.send("Staff added successfully")
 
 
   app.get('/course',(req,res)=>{
-    db.collection('course').find().toArray((err,data)=>{
+    db.collection('courses').find().toArray((err,data)=>{
       if (err) res.send("cant found course");
       else res.send(data)
     })
@@ -283,7 +284,7 @@ else res.send("Staff added successfully")
   })
 
   app.get('/sciencecourse',(req,res)=>{
-    db.collection('course').find({ "type": "Science" }).toArray((err,data)=>{
+    db.collection('courses').find({ "subject": "Science" }).toArray((err,data)=>{
       if (err) res.send("cant found course");
       else res.send(data)
     })
@@ -291,7 +292,7 @@ else res.send("Staff added successfully")
 
 
 app.get('/businesscourse',(req,res)=>{
-  db.collection('course').find({ "type": "Businees" }).toArray((err,data)=>{
+  db.collection('courses').find({ "subject": "business" }).toArray((err,data)=>{
     if (err) res.send("cant found course");
     else res.send(data)
   })
@@ -299,21 +300,21 @@ app.get('/businesscourse',(req,res)=>{
 
 
 app.get('/mathcourse',(req,res)=>{
-    db.collection('course').find({ "type": "math" }).toArray((err,data)=>{
+    db.collection('courses').find({ "subject": "math" }).toArray((err,data)=>{
       if (err) res.send("cant found course");
       else res.send(data)
     })
 })
 
 app.get('/Humanitiescourse',(req,res)=>{
-    db.collection('course').find({ "type": "Humanities" }).toArray((err,data)=>{
+    db.collection('courses').find({ "subject": "Humanities" }).toArray((err,data)=>{
       if (err) res.send("cant found course");
       else res.send(data)
     })
 })
 
 app.get('/Diplomacourse',(req,res)=>{
-    db.collection('course').find({ "type": "Diploma" }).toArray((err,data)=>{
+    db.collection('courses').find({ "subject": "Diploma" }).toArray((err,data)=>{
       if (err) res.send("cant found course");
       else res.send(data)
     })
@@ -331,7 +332,7 @@ app.get('/students',  (req, res)=> {
 
 
  app.post('/student',(req,res)=>{
-  let obj = {"type":"student"}
+  let obj = {"role":4,"type":"student"}
     let new_student= {...req.body,...obj};
   db.collection('user').insertOne({...new_student},(err,data)=>{
     if (err) res.send("nan");
@@ -377,7 +378,7 @@ app.get('/professors',  (req, res)=> {
 
 
  app.post('/professor',(req,res)=>{
-   let obj = {"type":"professor"}
+   let obj = {"role":2,"type":"professor"}
   let new_professor= {...req.body,...obj};
   console.log(new_professor);
   db.collection('user').insertOne({...new_professor},(err,data)=>{
